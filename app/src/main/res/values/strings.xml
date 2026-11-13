@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Residency Counter</string>
+    <string name="app_title">Permanent Residency</string>
+    <string name="widget_desc">Days left to apply for Permanent Residency</string>
+    <string name="days_left">days left</string>
+    <string name="days_done">days done</string>
+    <string name="st_inside">● In Saudi Arabia</string>
+    <string name="st_abroad">Abroad · paused</string>
+    <string name="st_nogrant">Tap to set the residency date</string>
+    <string name="lbl_expected">Expected application date</string>
+    <string name="lbl_reached">900 days completed on</string>
+    <string name="date_g">%1$s %2$s %3$s</string>
+    <string name="date_h">%1$s %2$s %3$s AH</string>
+    <string name="warn_late">The expected date is after the end of the 5 years (%1$s).</string>
+    <string name="act_exit">Record exit from Saudi Arabia</string>
+    <string name="act_return">Record return to Saudi Arabia</string>
+    <string name="grant_title">Premium Residency issue date</string>
+    <string name="choose_date">Choose date</string>
+    <string name="deadline">The 5 years end on %1$s</string>
+    <string name="trips_title">Travel record</string>
+    <string name="add_trip">+ Add trip</string>
+    <string name="trip_title">Trip</string>
+    <string name="trip_exit">Exit date</string>
+    <string name="trip_entry">Return date</string>
+    <string name="row_exit">Exit: %1$s</string>
+    <string name="row_entry">Return: %1$s</string>
+    <string name="not_returned">Not returned yet</string>
+    <string name="trip_days">%1$s days</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="no_trips">No trips recorded.</string>
+    <string name="rule_note">The exit day and the return day are not counted in the 900 days.</string>
+    <string-array name="greg_months">
+        <item>January</item><item>February</item><item>March</item><item>April</item>
+        <item>May</item><item>June</item><item>July</item><item>August</item>
+        <item>September</item><item>October</item><item>November</item><item>December</item>
+    </string-array>
+    <string-array name="hijri_months">
+        <item>Muharram</item><item>Safar</item><item>Rabi\' I</item><item>Rabi\' II</item>
+        <item>Jumada I</item><item>Jumada II</item><item>Rajab</item><item>Sha\'ban</item>
+        <item>Ramadan</item><item>Shawwal</item><item>Dhu al-Qi\'dah</item><item>Dhu al-Hijjah</item>
+    </string-array>
+</resources>

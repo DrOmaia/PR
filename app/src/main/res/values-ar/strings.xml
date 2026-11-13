@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">عداد الإقامة</string>
+    <string name="app_title">الإقامة الدائمة</string>
+    <string name="widget_desc">الأيام المتبقية للتقديم على الإقامة الدائمة</string>
+    <string name="days_left">يوم متبقي</string>
+    <string name="days_done">يوم منجز</string>
+    <string name="st_inside">● داخل السعودية</string>
+    <string name="st_abroad">خارج السعودية · متوقف</string>
+    <string name="st_nogrant">اضغط لتحديد تاريخ الإقامة</string>
+    <string name="lbl_expected">تاريخ التقديم المتوقع</string>
+    <string name="lbl_reached">اكتملت 900 يوم في</string>
+    <string name="date_g">%1$s %2$s %3$s</string>
+    <string name="date_h">%1$s %2$s %3$s هـ</string>
+    <string name="warn_late">التاريخ المتوقع بعد نهاية الخمس سنوات (%1$s).</string>
+    <string name="act_exit">تسجيل خروج من السعودية</string>
+    <string name="act_return">تسجيل العودة إلى السعودية</string>
+    <string name="grant_title">تاريخ الحصول على الإقامة المميزة</string>
+    <string name="choose_date">اختيار التاريخ</string>
+    <string name="deadline">تنتهي الخمس سنوات في %1$s</string>
+    <string name="trips_title">سجل السفر</string>
+    <string name="add_trip">+ إضافة سفرة</string>
+    <string name="trip_title">سفرة</string>
+    <string name="trip_exit">تاريخ الخروج</string>
+    <string name="trip_entry">تاريخ العودة</string>
+    <string name="row_exit">خروج: %1$s</string>
+    <string name="row_entry">عودة: %1$s</string>
+    <string name="not_returned">لم تُسجَّل العودة بعد</string>
+    <string name="trip_days">%1$s يوم</string>
+    <string name="clear">مسح</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="delete">حذف</string>
+    <string name="no_trips">لا توجد سفرات مسجلة.</string>
+    <string name="rule_note">يوم الخروج ويوم العودة لا يُحسبان ضمن الـ900 يوم.</string>
+    <string-array name="greg_months">
+        <item>يناير</item><item>فبراير</item><item>مارس</item><item>أبريل</item>
+        <item>مايو</item><item>يونيو</item><item>يوليو</item><item>أغسطس</item>
+        <item>سبتمبر</item><item>أكتوبر</item><item>نوفمبر</item><item>ديسمبر</item>
+    </string-array>
+    <string-array name="hijri_months">
+        <item>محرم</item><item>صفر</item><item>ربيع الأول</item><item>ربيع الآخر</item>
+        <item>جمادى الأولى</item><item>جمادى الآخرة</item><item>رجب</item><item>شعبان</item>
+        <item>رمضان</item><item>شوال</item><item>ذو القعدة</item><item>ذو الحجة</item>
+    </string-array>
+</resources>
