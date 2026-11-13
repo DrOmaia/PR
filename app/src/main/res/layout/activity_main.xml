@@ -35,12 +35,19 @@
                 android:text="@string/lang_other" />
         </LinearLayout>
 
+        <!-- the real widget, as on the home screen -->
         <FrameLayout
+            android:id="@+id/preview"
             android:layout_width="match_parent"
-            android:layout_height="214dp">
+            android:layout_height="wrap_content" />
 
-            <include layout="@layout/widget" />
-        </FrameLayout>
+        <Button
+            android:id="@+id/btn_look"
+            style="@style/DateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/look_open" />
 
         <TextView
             android:id="@+id/warning"
@@ -57,7 +64,7 @@
             android:id="@+id/btn_toggle"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/btn_primary"
             android:stateListAnimator="@null"
             android:text="@string/act_exit"

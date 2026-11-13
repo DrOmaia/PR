@@ -52,7 +52,7 @@ public class UiTest {
 
     private View widget(Store st, String today, int wDp, int hDp, String file) throws Exception {
         FrameLayout host = new FrameLayout(c);
-        View v = CounterWidget.build(c, st, LocalDate.parse(today), wDp, hDp).apply(c, host);
+        View v = CounterWidget.build(c, st, new Look(), LocalDate.parse(today), wDp, hDp).apply(c, host);
         host.addView(v);
         shoot(host, wDp, hDp, file);
         return v;
@@ -101,8 +101,7 @@ public class UiTest {
         assertEquals(r.done + " / 900", text(v, R.id.done));
         assertEquals(c.getString(R.string.st_inside), text(v, R.id.status));
         assertTrue(text(v, R.id.date_h).endsWith("هـ"));
-        View small = widget(st, "2026-11-13", 250, 110, "widget_inside_small.png");
-        assertEquals(View.GONE, small.findViewById(R.id.date_label).getVisibility());
+        widget(st, "2026-11-13", 250, 110, "widget_inside_small.png");
         widget(st, "2026-11-13", 360, 200, "widget_inside_large.png");
         widget(st, "2026-11-13", 360, 170, "widget_inside_mid.png");
         widget(st, "2026-11-13", 300, 130, "widget_inside_130.png");

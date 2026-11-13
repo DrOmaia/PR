@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +39,7 @@ public class MainActivity extends Activity {
         });
         text(R.id.version, getString(R.string.version, BuildConfig.VERSION_NAME));
         findViewById(R.id.btn_update).setOnClickListener(v -> checkUpdate(true));
+        findViewById(R.id.btn_look).setOnClickListener(v -> startActivity(new Intent(this, LookActivity.class)));
         if (b == null && System.currentTimeMillis() - lastAutoCheck > AUTO_CHECK_EVERY) {
             lastAutoCheck = System.currentTimeMillis();
             checkUpdate(false);
@@ -141,21 +141,7 @@ public class MainActivity extends Activity {
     private void render() {
         LocalDate today = Store.today();
         Summary s = Summary.of(this, st, today);
-        findViewById(R.id.card).setBackgroundResource(s.abroad ? R.drawable.card_paused : R.drawable.card);
-        TextView status = findViewById(R.id.status);
-        status.setText(s.status);
-        status.setTextColor(getColor(s.abroad || s.noGrant ? R.color.amber : R.color.on_card));
-        text(R.id.remaining, s.remaining);
-        ((TextView) findViewById(R.id.remaining)).setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 72);
-        ((TextView) findViewById(R.id.done)).setTextSize(26);
-        ((TextView) findViewById(R.id.date_g)).setTextSize(19);
-        ((TextView) findViewById(R.id.date_h)).setTextSize(19);
-        text(R.id.done, s.done);
-        ((ProgressBar) findViewById(R.id.progress)).setProgress(s.progress);
-        text(R.id.date_label, s.dateLabel);
-        text(R.id.date_g, s.dateG);
-        text(R.id.date_h, s.dateH);
-        findViewById(R.id.dates).setVisibility(s.noGrant ? View.INVISIBLE : View.VISIBLE);
+        CounterWidget.preview(this, findViewById(R.id.preview), st, Look.load(this), 214); // roomy card, same look
 
         TextView warning = findViewById(R.id.warning);
         warning.setVisibility(s.warning == null ? View.GONE : View.VISIBLE);

@@ -22,6 +22,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LookActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".CounterWidget"
             android:exported="true"

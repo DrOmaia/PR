@@ -7,8 +7,9 @@ date) to apply for Permanent Residency, and shows on a widget:
 - whether the holder is inside Saudi Arabia (counter running) or abroad (counter paused),
 - the expected application date, Gregorian and Hijri (Umm al-Qura).
 
-Tap the widget to open the app (settings): Premium Residency date, **Record exit / Record return**, and the travel
-record (add, edit, delete trips). Arabic and English: the phone's language until the button at the top of the app
+Tap the widget to open the app (settings): Premium Residency date, **Record exit / Record return**, the travel
+record (add, edit, delete trips), and **Widget appearance** (colour and opacity, size of the big number and of the
+other texts, three arrangements, swap sides, which items are shown; live preview at the widget's real size). Arabic and English: the phone's language until the button at the top of the app
 switches it (the widget follows the app). The dates never leave the phone; the only network use is
 **Check for update**.
 
@@ -30,12 +31,13 @@ switches it (the widget follows the app). The dates never leave the phone; the o
 | `app/src/pub/java/.../Defaults.java` | Empty: a build with no dates inside. |
 | `Store.java` | Saved dates (SharedPreferences, JSON). The first run saves the starting dates at once. |
 | `Summary.java` | Texts shown on the widget and the app card; Gregorian / Hijri formatting. |
-| `CounterWidget.java` | The widget (refresh after midnight, hourly, on resize, after an update and on every edit). |
+| `CounterWidget.java` | The widget (refresh after midnight, hourly, on resize, after an update and on every edit). `build()` measures the views off-screen and gives the big number the largest size at which every text still fits (`fits()`); crowded small widgets get smaller side texts. `preview()` draws the same widget inside the app. |
+| `Look.java`, `LookActivity.java` | The widget's look (saved on the phone) and the "Widget appearance" screen. |
 | `MainActivity.java` | The settings screen, language button, update check. |
 | `Lang.java` | Interface language (phone's, or Arabic / English chosen in the app). |
 | `Updater.java` | In-app update: `version.json` + APK from the public folder, checksum, Android's installer. |
 | `DrOmaia.github.io/pr/index.html` (site repository) | The download page (Arabic / English); reads `version.json`, so it needs no edit on an update. |
-| `res/layout/widget.xml` | The card, used by the widget and included at the top of the app. |
+| `res/layout/widget.xml`, `widget_center.xml`, `widget_dates_top.xml` | The three arrangements; same view ids in all (a tinted rounded image is the card, so any colour works). |
 | `res/values/strings.xml`, `res/values-ar/strings.xml` | All texts, same keys in both. |
 | `tools/publish-update.sh` | Builds the public APK and writes it with `version.json` into the site repository. |
 

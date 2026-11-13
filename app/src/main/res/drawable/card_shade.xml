@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Soft light-to-dark shading over any card colour. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient android:angle="315" android:endColor="#3D4A55" android:startColor="#66767F" />
+    <gradient android:angle="315" android:endColor="#2E000000" android:startColor="#2EFFFFFF" />
     <corners android:radius="24dp" />
 </shape>

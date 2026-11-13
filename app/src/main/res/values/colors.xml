@@ -9,4 +9,5 @@
     <color name="text">#26302C</color>
     <color name="muted">#6B7872</color>
     <color name="warn_text">#7A5200</color>
+    <color name="line">#C9D2CE</color>
 </resources>
