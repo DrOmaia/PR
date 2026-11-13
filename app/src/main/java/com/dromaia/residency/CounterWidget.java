@@ -22,7 +22,8 @@ public class CounterWidget extends AppWidgetProvider {
     public void onReceive(Context c, Intent i) {
         super.onReceive(c, i);
         String a = i.getAction();
-        if (ACTION_TICK.equals(a) || Intent.ACTION_TIME_CHANGED.equals(a) || Intent.ACTION_TIMEZONE_CHANGED.equals(a)) {
+        if (ACTION_TICK.equals(a) || Intent.ACTION_TIME_CHANGED.equals(a) || Intent.ACTION_TIMEZONE_CHANGED.equals(a)
+                || Intent.ACTION_MY_PACKAGE_REPLACED.equals(a)) {
             refresh(c);
         }
     }
@@ -57,9 +58,14 @@ public class CounterWidget extends AppWidgetProvider {
     }
 
     /** heightDp: the widget's height on the home screen (0 = unknown). Short widgets drop the two small labels. */
-    static RemoteViews build(Context c, Store st, LocalDate today, int heightDp) {
+    static RemoteViews build(Context context, Store st, LocalDate today, int heightDp) {
+        Context c = Lang.wrap(context); // the language chosen in the app, not the home screen's
         Summary s = Summary.of(c, st, today);
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
+        v.setInt(R.id.card, "setLayoutDirection", Lang.rtl(c) ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+        v.setTextViewText(R.id.title, c.getString(R.string.app_title));
+        v.setTextViewText(R.id.left_label, c.getString(R.string.days_left));
+        v.setTextViewText(R.id.done_label, c.getString(R.string.days_done));
         boolean compact = heightDp > 0 && heightDp < 130;
         v.setTextViewTextSize(R.id.remaining, TypedValue.COMPLEX_UNIT_SP, compact ? 30 : heightDp >= 190 ? 52 : 40);
         v.setViewVisibility(R.id.done_label, compact ? View.GONE : View.VISIBLE);

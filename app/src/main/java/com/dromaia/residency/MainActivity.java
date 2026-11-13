@@ -3,24 +3,47 @@ package com.dromaia.residency;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
 /** The settings screen (opened from the launcher or by tapping the widget). */
 public class MainActivity extends Activity {
+    private static final long AUTO_CHECK_EVERY = 6 * 60 * 60 * 1000L;
+    private static long lastAutoCheck;
     private Store st;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(Lang.wrap(base));
+    }
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        getWindow().getDecorView().setLayoutDirection(
+                Lang.rtl(this) ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.btn_lang).setOnClickListener(v -> {
+            Lang.set(this, Lang.arabic(this) ? "en" : "ar");
+            recreate();
+        });
+        text(R.id.version, getString(R.string.version, BuildConfig.VERSION_NAME));
+        findViewById(R.id.btn_update).setOnClickListener(v -> checkUpdate(true));
+        if (b == null && System.currentTimeMillis() - lastAutoCheck > AUTO_CHECK_EVERY) {
+            lastAutoCheck = System.currentTimeMillis();
+            checkUpdate(false);
+        }
         findViewById(R.id.btn_toggle).setOnClickListener(v -> toggle());
         findViewById(R.id.btn_grant).setOnClickListener(v ->
                 pickDate(st.grant != null ? st.grant : Store.today(), null, d -> {
@@ -36,6 +59,60 @@ public class MainActivity extends Activity {
         st = Store.load(this);
         render();
         CounterWidget.refresh(this);
+    }
+
+    /** The answer of Android's installer after "Update". */
+    @Override
+    protected void onNewIntent(Intent i) {
+        super.onNewIntent(i);
+        if (!Updater.ACTION_STATUS.equals(i.getAction())) return;
+        int status = i.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);
+        if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+            Intent confirm = i.getParcelableExtra(Intent.EXTRA_INTENT);
+            if (confirm != null) startActivity(confirm);
+        } else if (status != PackageInstaller.STATUS_SUCCESS) {
+            toast(R.string.update_failed);
+        }
+    }
+
+    /** manual = the button was pressed: say also "latest version" / "failed". Otherwise speak only if there is one. */
+    private void checkUpdate(boolean manual) {
+        if (Updater.base.isEmpty()) return;
+        if (manual) toast(R.string.checking);
+        new Thread(() -> {
+            try {
+                Updater.Info info = Updater.check();
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (info.code > BuildConfig.VERSION_CODE) {
+                        new AlertDialog.Builder(this)
+                                .setMessage(getString(R.string.update_found, info.name))
+                                .setNegativeButton(R.string.later, null)
+                                .setPositiveButton(R.string.update, (d, w) -> startUpdate(info))
+                                .show();
+                    } else if (manual) {
+                        toast(R.string.up_to_date);
+                    }
+                });
+            } catch (Exception e) {
+                if (manual) runOnUiThread(() -> toast(R.string.update_failed));
+            }
+        }).start();
+    }
+
+    private void startUpdate(Updater.Info info) {
+        toast(R.string.downloading);
+        new Thread(() -> {
+            try {
+                Updater.install(this, Updater.download(this, info));
+            } catch (Exception e) {
+                runOnUiThread(() -> toast(R.string.update_failed));
+            }
+        }).start();
+    }
+
+    private void toast(int id) {
+        Toast.makeText(this, id, Toast.LENGTH_LONG).show();
     }
 
     private void changed() {
@@ -97,7 +174,9 @@ public class MainActivity extends Activity {
             ((TextView) row.findViewById(R.id.row_exit)).setText(getString(R.string.row_exit, Summary.greg(this, t.exit)));
             ((TextView) row.findViewById(R.id.row_entry)).setText(getString(R.string.row_entry,
                     t.entry == null ? getString(R.string.not_returned) : Summary.greg(this, t.entry)));
-            ((TextView) row.findViewById(R.id.row_days)).setText(getString(R.string.trip_days, Summary.num(t.daysOut(today))));
+            int out = t.daysOut(today);
+            ((TextView) row.findViewById(R.id.row_days)).setText(
+                    getResources().getQuantityString(R.plurals.trip_days, out, Summary.num(out)));
             row.setOnClickListener(v -> editTrip(t));
             list.addView(row);
         }

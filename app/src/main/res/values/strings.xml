@@ -26,13 +26,26 @@
     <string name="row_exit">Exit: %1$s</string>
     <string name="row_entry">Return: %1$s</string>
     <string name="not_returned">Not returned yet</string>
-    <string name="trip_days">%1$s days</string>
     <string name="clear">Clear</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="no_trips">No trips recorded.</string>
     <string name="rule_note">The exit day and the return day are not counted in the 900 days.</string>
+    <string name="lang_other">العربية</string>
+    <string name="version">Version %1$s</string>
+    <string name="check_update">Check for update</string>
+    <string name="checking">Checking…</string>
+    <string name="up_to_date">This is the latest version.</string>
+    <string name="update_found">A new version (%1$s) is available. Install it now?</string>
+    <string name="update">Update</string>
+    <string name="later">Later</string>
+    <string name="downloading">Downloading the update…</string>
+    <string name="update_failed">Update failed. Try again later.</string>
+    <plurals name="trip_days">
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
+    </plurals>
     <string-array name="greg_months">
         <item>January</item><item>February</item><item>March</item><item>April</item>
         <item>May</item><item>June</item><item>July</item><item>August</item>

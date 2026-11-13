@@ -18,9 +18,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Test and build
-        run: ./gradlew --no-daemon --console=plain testDebugUnitTest assembleRelease
+        run: ./gradlew --no-daemon --console=plain testPersonalDebugUnitTest testPubDebugUnitTest assemblePersonalRelease assemblePubRelease
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk residency-counter.apk
+        run: cp app/build/outputs/apk/personal/release/app-personal-release.apk residency-counter.apk
       - uses: actions/upload-artifact@v4
         with:
           name: residency-counter

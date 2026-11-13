@@ -38,16 +38,20 @@ final class Store {
                     s.trips.add(new Calc.Trip(LocalDate.parse(t.getString(0)),
                             entry.isEmpty() ? null : LocalDate.parse(entry)));
                 }
-                if (s.grant == null) s.grant = Defaults.grant();
+                if (s.grant == null && Defaults.grant() != null) {
+                    s.grant = Defaults.grant();
+                    s.save(c);
+                }
                 s.sort();
                 return s;
             } catch (Exception e) {
                 s = new Store();
             }
         }
+        // First run: the starting dates are saved on the phone at once, so later updates (which carry no dates) keep them.
         s.grant = Defaults.grant();
         s.trips = Defaults.trips();
-        s.sort();
+        s.save(c);
         return s;
     }
 

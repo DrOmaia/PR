@@ -26,13 +26,30 @@
     <string name="row_exit">خروج: %1$s</string>
     <string name="row_entry">عودة: %1$s</string>
     <string name="not_returned">لم تُسجَّل العودة بعد</string>
-    <string name="trip_days">%1$s يوم</string>
     <string name="clear">مسح</string>
     <string name="save">حفظ</string>
     <string name="cancel">إلغاء</string>
     <string name="delete">حذف</string>
     <string name="no_trips">لا توجد سفرات مسجلة.</string>
     <string name="rule_note">يوم الخروج ويوم العودة لا يُحسبان ضمن الـ900 يوم.</string>
+    <string name="lang_other">English</string>
+    <string name="version">الإصدار %1$s</string>
+    <string name="check_update">التحقق من التحديث</string>
+    <string name="checking">جارٍ التحقق…</string>
+    <string name="up_to_date">هذا آخر إصدار.</string>
+    <string name="update_found">يوجد إصدار جديد (%1$s). تثبيته الآن؟</string>
+    <string name="update">تحديث</string>
+    <string name="later">لاحقًا</string>
+    <string name="downloading">جارٍ تنزيل التحديث…</string>
+    <string name="update_failed">تعذّر التحديث. أعد المحاولة لاحقًا.</string>
+    <plurals name="trip_days">
+        <item quantity="zero">%1$s يوم</item>
+        <item quantity="one">يوم واحد</item>
+        <item quantity="two">يومان</item>
+        <item quantity="few">%1$s أيام</item>
+        <item quantity="many">%1$s يومًا</item>
+        <item quantity="other">%1$s يوم</item>
+    </plurals>
     <string-array name="greg_months">
         <item>يناير</item><item>فبراير</item><item>مارس</item><item>أبريل</item>
         <item>مايو</item><item>يونيو</item><item>يوليو</item><item>أغسطس</item>

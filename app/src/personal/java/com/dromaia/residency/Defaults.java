@@ -4,13 +4,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/** The data the app starts with on first install (from the owner's travel record). Editable in the app. */
+/**
+ * "personal" build only: the dates the app starts with on first install (the owner's record). Editable in the app.
+ * Private data: it is compiled into the private release of this repository, never into the public update file
+ * (the "pub" build has an empty Defaults).
+ */
 final class Defaults {
     private Defaults() {}
 
-    /** Premium Residency issue date; null = asked in the app. */
+    /** Premium Residency issue date. */
     static LocalDate grant() {
-        return null;
+        return LocalDate.parse("2025-05-28");
     }
 
     static List<Calc.Trip> trips() {

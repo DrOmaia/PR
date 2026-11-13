@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -34,9 +35,18 @@ import java.time.LocalDate;
 public class UiTest {
     private final Context c = RuntimeEnvironment.getApplication();
 
+    @Before
+    public void noNetwork() {
+        Updater.base = ""; // no update checks in these tests
+    }
+
+    /** The same example record in every build variant. */
     private Store store(String grant) {
-        Store st = Store.load(c);
+        Store st = new Store();
         st.grant = grant == null ? null : LocalDate.parse(grant);
+        String[][] trips = {{"2025-05-29", "2025-08-08"}, {"2025-11-11", "2025-11-15"}, {"2026-03-07", "2026-03-25"},
+                {"2026-03-25", "2026-03-25"}, {"2026-05-19", "2026-07-31"}};
+        for (String[] t : trips) st.trips.add(new Calc.Trip(LocalDate.parse(t[0]), LocalDate.parse(t[1])));
         return st;
     }
 
@@ -68,13 +78,6 @@ public class UiTest {
 
     private static String text(View root, int id) {
         return ((TextView) root.findViewById(id)).getText().toString();
-    }
-
-    @Test
-    public void firstInstall_startsWithTheTravelRecord() {
-        Store st = Store.load(c);
-        assertEquals(5, st.trips.size());
-        assertNull(st.openTrip());
     }
 
     @Test
@@ -134,7 +137,35 @@ public class UiTest {
         LinearLayout list = a.findViewById(R.id.trips);
         assertEquals(5, list.getChildCount());
         assertEquals(c.getString(R.string.act_exit), text(a.getWindow().getDecorView(), R.id.btn_toggle));
-        shoot(a.findViewById(android.R.id.content), 411, 891, "app.png");
+        assertEquals("الإصدار " + BuildConfig.VERSION_NAME, text(a.getWindow().getDecorView(), R.id.version));
+        shoot(a.findViewById(android.R.id.content), 411, 980, "app.png");
+    }
+
+    @Test
+    public void languageButton_switchesTheAppAndTheWidget() throws Exception {
+        Store st = store("2025-05-28");
+        st.save(c);
+        Activity a = Robolectric.buildActivity(MainActivity.class).setup().get();
+        assertEquals("English", text(a.getWindow().getDecorView(), R.id.btn_lang));
+        a.findViewById(R.id.btn_lang).performClick();
+        assertEquals("en", Lang.get(c));
+
+        Activity b = Robolectric.buildActivity(MainActivity.class).setup().get();
+        assertEquals("العربية", text(b.getWindow().getDecorView(), R.id.btn_lang));
+        assertEquals("Record exit from Saudi Arabia", text(b.getWindow().getDecorView(), R.id.btn_toggle));
+        assertEquals(View.LAYOUT_DIRECTION_LTR, b.getWindow().getDecorView().getLayoutDirection());
+
+        // the phone is Arabic, the app was switched to English: the widget follows the app
+        View w = widget(st, "2026-11-13", 320, 150, "widget_en_on_arabic_phone.png");
+        assertEquals("● In Saudi Arabia", text(w, R.id.status));
+        assertEquals("days left", text(w, R.id.left_label));
+        assertEquals(View.LAYOUT_DIRECTION_LTR, w.findViewById(R.id.card).getLayoutDirection());
+        assertTrue(text(w, R.id.date_h).endsWith("AH"));
+
+        b.findViewById(R.id.btn_lang).performClick();
+        assertEquals("ar", Lang.get(c));
+        View w2 = widget(st, "2026-11-13", 320, 150, "widget_owner.png");
+        assertEquals(View.LAYOUT_DIRECTION_RTL, w2.findViewById(R.id.card).getLayoutDirection());
     }
 
     @Test
@@ -146,6 +177,6 @@ public class UiTest {
         widget(st, "2026-11-13", 320, 150, "widget_en.png");
         Activity a = Robolectric.buildActivity(MainActivity.class).setup().get();
         assertEquals(c.getString(R.string.act_return), text(a.getWindow().getDecorView(), R.id.btn_toggle));
-        shoot(a.findViewById(android.R.id.content), 411, 891, "app_en.png");
+        shoot(a.findViewById(android.R.id.content), 411, 1060, "app_en.png");
     }
 }
