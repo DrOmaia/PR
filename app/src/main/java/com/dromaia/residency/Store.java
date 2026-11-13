@@ -38,7 +38,12 @@ final class Store {
                     s.trips.add(new Calc.Trip(LocalDate.parse(t.getString(0)),
                             entry.isEmpty() ? null : LocalDate.parse(entry)));
                 }
-                if (s.grant == null && Defaults.grant() != null) {
+                if (s.grant == null && s.trips.isEmpty() && Defaults.grant() != null) {
+                    // nothing was ever entered (e.g. installed first from a build with no dates): take the starting dates
+                    s.grant = Defaults.grant();
+                    s.trips = Defaults.trips();
+                    s.save(c);
+                } else if (s.grant == null && Defaults.grant() != null) {
                     s.grant = Defaults.grant();
                     s.save(c);
                 }

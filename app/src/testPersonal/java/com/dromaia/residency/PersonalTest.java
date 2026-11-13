@@ -34,6 +34,24 @@ public class PersonalTest {
     }
 
     @Test
+    public void afterABuildWithNoDates_theStartingDatesArrive() {
+        // what the build with no dates saves at its first run
+        c.getSharedPreferences("data", Context.MODE_PRIVATE).edit().putString("state", "{\"grant\":\"\",\"trips\":[]}").commit();
+        Store st = Store.load(c);
+        assertEquals(LocalDate.parse("2025-05-28"), st.grant);
+        assertEquals(5, st.trips.size());
+    }
+
+    @Test
+    public void datesEnteredByHand_areNeverReplaced() {
+        c.getSharedPreferences("data", Context.MODE_PRIVATE).edit().putString("state",
+                "{\"grant\":\"2024-01-15\",\"trips\":[[\"2024-03-01\",\"2024-03-10\"]]}").commit();
+        Store st = Store.load(c);
+        assertEquals(LocalDate.parse("2024-01-15"), st.grant);
+        assertEquals(1, st.trips.size());
+    }
+
+    @Test
     public void ownerNumbers_onACheckedDay() {
         Store st = Store.load(c);
         // 28 May 2025 .. 13 Nov 2026 = 535 days; not counted: 72 + 5 + 19 + 74 = 170 (25 March is inside the third trip)

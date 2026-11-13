@@ -26,14 +26,15 @@ switches it (the widget follows the app). The dates never leave the phone; the o
 | File | What it holds |
 | --- | --- |
 | `app/src/main/java/.../Calc.java` | The rule (no Android code; unit tested). |
-| `app/src/personal/java/.../Defaults.java` | The dates the app starts with on first install (owner's record). Private data: keep this repository private. |
-| `app/src/pub/java/.../Defaults.java` | Empty: the public update file carries no dates. |
+| `app/src/personal/java/.../Defaults.java` | The dates the app starts with on first install (owner's record). |
+| `app/src/pub/java/.../Defaults.java` | Empty: a build with no dates inside. |
 | `Store.java` | Saved dates (SharedPreferences, JSON). The first run saves the starting dates at once. |
 | `Summary.java` | Texts shown on the widget and the app card; Gregorian / Hijri formatting. |
 | `CounterWidget.java` | The widget (refresh after midnight, hourly, on resize, after an update and on every edit). |
 | `MainActivity.java` | The settings screen, language button, update check. |
 | `Lang.java` | Interface language (phone's, or Arabic / English chosen in the app). |
 | `Updater.java` | In-app update: `version.json` + APK from the public folder, checksum, Android's installer. |
+| `DrOmaia.github.io/pr/index.html` (site repository) | The download page (Arabic / English); reads `version.json`, so it needs no edit on an update. |
 | `res/layout/widget.xml` | The card, used by the widget and included at the top of the app. |
 | `res/values/strings.xml`, `res/values-ar/strings.xml` | All texts, same keys in both. |
 | `tools/publish-update.sh` | Builds the public APK and writes it with `version.json` into the site repository. |
@@ -44,11 +45,13 @@ No libraries beyond the Android framework (tests use JUnit + Robolectric).
 
 | Build | Dates inside | Where it goes |
 | --- | --- | --- |
-| `personal` | The owner's Premium Residency date and travel record | **First install**: Releases of this private repository (built by GitHub Actions on every push to `main`). |
-| `pub` | None | **In-app update**: `https://dromaia.github.io/residency/` (`version.json` + `residency-counter.apk`), public. |
+| `personal` | The owner's Premium Residency date and travel record | The download page <https://dromaia.github.io/pr/> and the in-app update (`https://dromaia.github.io/residency/`: `version.json` + `residency-counter.apk`); also Releases of this repository (GitHub Actions, every push to `main`). |
+| `pub` | None | Not published; kept for a copy to share without the dates (`tools/publish-update.sh <site> pub`). |
 
-Both have the same application id and are signed with `app/app.keystore`, so the update installs over the first
-install and keeps the dates saved on the phone. Never put dates in `main/` or `pub/` code.
+The owner chose (13 Nov 2026) to have her own version, with her dates, as the file on the public page.
+Both builds have the same application id and are signed with `app/app.keystore`, so any of them installs over the
+other and keeps the dates saved on the phone. Dates entered on a phone are never replaced; a phone where nothing
+was entered takes the starting dates of the `personal` build.
 
 ## Build, test, publish an update
 
@@ -60,6 +63,6 @@ install and keeps the dates saved on the phone. Never put dates in `main/` or `p
 
 For every change:
 1. Bump `versionCode` (and `versionName`) in `app/build.gradle`; add or update a test; run the tests.
-2. Commit and push to `main` (GitHub Actions publishes the `personal` APK under Releases).
+2. Commit and push to `main` (GitHub Actions also publishes the `personal` APK under Releases).
 3. `tools/publish-update.sh /path/to/DrOmaia.github.io`, then commit and push that repository to `main`.
    The app checks `version.json` when it opens (at most every 6 hours) and from **Check for update**.
