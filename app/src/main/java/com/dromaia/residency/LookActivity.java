@@ -51,11 +51,15 @@ public class LookActivity extends Activity {
         });
         check(R.id.lk_swap, on -> look.swap = on);
         check(R.id.lk_s_title, on -> look.title = on);
+        check(R.id.lk_s_status, on -> look.status = on);
+        check(R.id.lk_s_number, on -> look.number = on);
+        check(R.id.lk_s_left, on -> look.leftLabel = on);
         check(R.id.lk_s_done, on -> look.done = on);
+        check(R.id.lk_s_done_label, on -> look.doneLabel = on);
         check(R.id.lk_s_bar, on -> look.bar = on);
+        check(R.id.lk_s_date_label, on -> look.dateLabel = on);
         check(R.id.lk_s_greg, on -> look.greg = on);
         check(R.id.lk_s_hijri, on -> look.hijri = on);
-        check(R.id.lk_s_labels, on -> look.labels = on);
         fill();
         show();
     }
@@ -101,16 +105,21 @@ public class LookActivity extends Activity {
         ((RadioGroup) findViewById(R.id.lk_layout)).check(LAYOUT_IDS[look.layout]);
         ((CheckBox) findViewById(R.id.lk_swap)).setChecked(look.swap);
         ((CheckBox) findViewById(R.id.lk_s_title)).setChecked(look.title);
+        ((CheckBox) findViewById(R.id.lk_s_status)).setChecked(look.status);
+        ((CheckBox) findViewById(R.id.lk_s_number)).setChecked(look.number);
+        ((CheckBox) findViewById(R.id.lk_s_left)).setChecked(look.leftLabel);
         ((CheckBox) findViewById(R.id.lk_s_done)).setChecked(look.done);
+        ((CheckBox) findViewById(R.id.lk_s_done_label)).setChecked(look.doneLabel);
         ((CheckBox) findViewById(R.id.lk_s_bar)).setChecked(look.bar);
+        ((CheckBox) findViewById(R.id.lk_s_date_label)).setChecked(look.dateLabel);
         ((CheckBox) findViewById(R.id.lk_s_greg)).setChecked(look.greg);
         ((CheckBox) findViewById(R.id.lk_s_hijri)).setChecked(look.hijri);
-        ((CheckBox) findViewById(R.id.lk_s_labels)).setChecked(look.labels);
         filling = false;
     }
 
     private void changed() {
         look.save(this);
+        fill(); // e.g. the big number comes back when everything was switched off
         show();
         CounterWidget.refresh(this);
     }

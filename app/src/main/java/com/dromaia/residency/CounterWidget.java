@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -83,30 +84,51 @@ public class CounterWidget extends AppWidgetProvider {
     }
 
     /**
-     * The widget for a space of widthDp x heightDp. The big number gets the largest size at which everything still
-     * fits (measured, not guessed), times the user's "big number" percentage. If the space is too small even for a
-     * small number, the other texts are reduced step by step.
+     * The widget for a space of widthDp x heightDp, sized by measuring (not guessing):
+     * - big number shown: it gets the largest size at which everything still fits, times the "big number"
+     *   percentage; if the space is too small, the other texts are reduced step by step;
+     * - big number hidden: the other texts grow to the largest size that fits;
+     * - still too small to stay readable: the least important items are left out one by one (Look.dropOne).
      */
     static RemoteViews build(Context context, Store st, Look look, LocalDate today, int widthDp, int heightDp) {
         Context c = Lang.wrap(context); // the language chosen in the app, not the home screen's
         Summary s = Summary.of(c, st, today);
-        float small = look.small / 100f;
-        float number = 0;
-        for (int i = 0; i < 14; i++) {
-            number = largestNumber(c, s, look, small, widthDp, heightDp);
-            if (number >= 26) break;
-            small *= 0.88f; // too crowded: smaller side texts, try again
-        }
-        return views(c, s, look, small, Math.max(12, number) * look.big / 100f);
-    }
-
-    private static float largestNumber(Context c, Summary s, Look look, float small, int widthDp, int heightDp) {
-        View v = views(c, s, look, small, 40).apply(c, new FrameLayout(c));
-        TextView number = v.findViewById(R.id.remaining);
         float d = c.getResources().getDisplayMetrics().density;
         // a little smaller than the real space: home screens differ slightly in fonts and padding
         int w = Math.round(widthDp * d * 0.97f), h = Math.round(heightDp * d * 0.97f);
-        float lo = 12, hi = 130;
+        Look k = look.copy();
+        while (true) {
+            float small = k.small / 100f;
+            if (!k.number) {
+                float lo = 0.15f, hi = 5f;
+                for (int i = 0; i < 9; i++) {
+                    float mid = (lo + hi) / 2;
+                    if (fits(views(c, s, k, mid, 0, widthDp, heightDp).apply(c, new FrameLayout(c)), w, h)) lo = mid; else hi = mid;
+                }
+                if (lo >= MIN_SMALL || !k.dropOne()) {
+                    return views(c, s, k, lo * Math.min(k.small, 100) / 100f, 0, widthDp, heightDp);
+                }
+                continue;
+            }
+            float number = 0;
+            while (true) {
+                number = largestNumber(c, s, k, small, widthDp, heightDp, w, h);
+                if (number >= 26 || small * 0.88f < MIN_SMALL) break;
+                small *= 0.88f; // crowded: smaller side texts, try again
+            }
+            if (number >= MIN_NUMBER || !k.dropOne()) {
+                return views(c, s, k, small, Math.max(8, number) * k.big / 100f, widthDp, heightDp);
+            }
+        }
+    }
+
+    /** Below these the texts are not readable any more: leave an item out instead. */
+    private static final float MIN_SMALL = 0.6f, MIN_NUMBER = 18;
+
+    private static float largestNumber(Context c, Summary s, Look look, float small, int widthDp, int heightDp, int w, int h) {
+        View v = views(c, s, look, small, 40, widthDp, heightDp).apply(c, new FrameLayout(c));
+        TextView number = v.findViewById(R.id.remaining);
+        float lo = 8, hi = 150;
         number.setTextSize(TypedValue.COMPLEX_UNIT_DIP, lo);
         if (!fits(v, w, h)) return 0; // not even a small number fits with these side texts
         for (int i = 0; i < 9; i++) {
@@ -151,12 +173,21 @@ public class CounterWidget extends AppWidgetProvider {
     }
 
     /** One RemoteViews with the texts, colours, sizes and visibility. small = scale of the texts other than the big number. */
-    private static RemoteViews views(Context c, Summary s, Look k, float small, float numberDp) {
+    private static RemoteViews views(Context c, Summary s, Look k, float small, float numberDp, int widthDp, int heightDp) {
         int layout = k.layout == 1 ? R.layout.widget_center : k.layout == 2 ? R.layout.widget_dates_top : R.layout.widget;
         RemoteViews v = new RemoteViews(c.getPackageName(), layout);
         boolean rtl = Lang.rtl(c);
         v.setInt(R.id.card, "setLayoutDirection", rtl ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         v.setInt(R.id.row_number, "setLayoutDirection", rtl != k.swap ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+
+        // small widgets: less padding and rounder-to-size corners
+        float d = c.getResources().getDisplayMetrics().density;
+        int padH = Math.round(Math.max(5, Math.min(18, widthDp * 0.055f)) * d);
+        int padV = Math.round(Math.max(3, Math.min(10, heightDp * 0.066f)) * d);
+        v.setViewPadding(R.id.content, padH, padV, padH, padV);
+        boolean tiny = Math.min(widthDp, heightDp) < 90;
+        v.setImageViewResource(R.id.bg, tiny ? R.drawable.card_shape_small : R.drawable.card_shape);
+        v.setImageViewResource(R.id.shade, tiny ? R.drawable.card_shade_small : R.drawable.card_shade);
 
         // colours: any card colour; white or dark text by how light it is
         int card = (s.abroad ? Look.PAUSED_COLOR : k.color) | 0xFF000000;
@@ -201,13 +232,26 @@ public class CounterWidget extends AppWidgetProvider {
         v.setTextViewTextSize(R.id.date_g, TypedValue.COMPLEX_UNIT_SP, 17 * small);
         v.setTextViewTextSize(R.id.date_h, TypedValue.COMPLEX_UNIT_SP, 17 * small);
 
-        // shown items (the top line stays while the residency date is missing: it says what to do)
-        v.setViewVisibility(R.id.row_top, k.title || s.noGrant ? View.VISIBLE : View.GONE);
+        // shown items, one switch each. A hidden text that keeps two others apart stays as an empty spacer.
+        boolean status = k.status || s.noGrant; // while the residency date is missing the status says what to do
+        boolean dates = (k.greg || k.hijri) && !s.noGrant;
+        v.setViewVisibility(R.id.row_top, k.title || status ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.title, k.title ? View.VISIBLE : View.INVISIBLE);
+        v.setViewVisibility(R.id.status, status ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.row_number, k.number || k.leftLabel || (k.done && k.layout != 1) ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.remaining, k.number ? View.VISIBLE : View.GONE);
+        // an item alone in its line sits in the middle
+        boolean numberAlone = k.number && !k.leftLabel && (!k.done || k.layout == 1);
+        v.setViewVisibility(R.id.left_label, k.leftLabel ? View.VISIBLE : k.layout == 1 || numberAlone ? View.GONE : View.INVISIBLE);
+        v.setInt(R.id.row_number, "setGravity", k.layout == 1 || numberAlone ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
+        boolean dateAlone = k.greg != k.hijri && !k.dateLabel;
+        v.setInt(R.id.row_dates, "setGravity", dateAlone ? Gravity.CENTER_HORIZONTAL : Gravity.START);
+        v.setInt(R.id.date_g, "setGravity", dateAlone ? Gravity.CENTER_HORIZONTAL : Gravity.START);
         v.setViewVisibility(R.id.done_box, k.done ? View.VISIBLE : View.GONE);
-        v.setViewVisibility(R.id.done_label, k.labels ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.done_label, k.doneLabel ? View.VISIBLE : View.GONE);
         v.setViewVisibility(R.id.bar_box, k.bar ? View.VISIBLE : View.GONE);
-        v.setViewVisibility(R.id.dates, (k.greg || k.hijri) && !s.noGrant ? View.VISIBLE : View.GONE);
-        v.setViewVisibility(R.id.date_label, k.labels ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.dates, dates ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.date_label, k.dateLabel ? View.VISIBLE : View.GONE);
         v.setViewVisibility(R.id.date_g, k.greg ? View.VISIBLE : View.GONE);
         v.setViewVisibility(R.id.date_h, k.hijri ? View.VISIBLE : View.GONE);
 
@@ -232,7 +276,7 @@ public class CounterWidget extends AppWidgetProvider {
         v.findViewById(R.id.card).setClickable(false);
         host.removeAllViews();
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(Math.round(wDp * d), Math.round(size[1] * d));
-        p.gravity = android.view.Gravity.CENTER_HORIZONTAL;
+        p.gravity = Gravity.CENTER_HORIZONTAL;
         host.addView(v, p);
         return v;
     }

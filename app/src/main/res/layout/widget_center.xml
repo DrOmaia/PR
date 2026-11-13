@@ -23,12 +23,14 @@
         android:src="@drawable/card_shade" />
 
     <LinearLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingStart="18dp"
+        android:paddingLeft="18dp"
         android:paddingTop="10dp"
-        android:paddingEnd="18dp"
+        android:paddingRight="18dp"
         android:paddingBottom="10dp">
 
         <LinearLayout
@@ -163,6 +165,7 @@
                 android:textSize="12sp" />
 
             <LinearLayout
+                android:id="@+id/row_dates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

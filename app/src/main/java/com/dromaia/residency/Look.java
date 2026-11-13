@@ -21,7 +21,9 @@ final class Look {
     boolean swap;              // number and days done on the other sides
     int big = 100;             // big number: % of the largest size that fits
     int small = 100;           // the other numbers and texts, %
-    boolean title = true, done = true, bar = true, greg = true, hijri = true, labels = true; // shown items
+    // shown items, one switch each
+    boolean title = true, status = true, number = true, leftLabel = true, done = true, doneLabel = true, bar = true,
+            dateLabel = true, greg = true, hijri = true;
 
     /** Light card colours get dark text. */
     static boolean light(int color) {
@@ -41,23 +43,67 @@ final class Look {
             k.big = clamp(o.optInt("big", k.big), 50, 100);
             k.small = clamp(o.optInt("small", k.small), 70, 150);
             k.title = o.optBoolean("title", true);
+            k.status = o.optBoolean("status", k.title);           // before 1.6: one switch for title + status
+            k.number = o.optBoolean("number", true);
+            k.leftLabel = o.optBoolean("leftLabel", true);
             k.done = o.optBoolean("done", true);
+            boolean labels = o.optBoolean("labels", true);         // before 1.6: one switch for the small labels
+            k.doneLabel = o.optBoolean("doneLabel", labels);
             k.bar = o.optBoolean("bar", true);
+            k.dateLabel = o.optBoolean("dateLabel", labels);
             k.greg = o.optBoolean("greg", true);
             k.hijri = o.optBoolean("hijri", true);
-            k.labels = o.optBoolean("labels", true);
+            k.normalize();
         } catch (Exception e) {
             return new Look();
         }
         return k;
     }
 
+    Look copy() {
+        Look k = new Look();
+        k.color = color; k.alpha = alpha; k.layout = layout; k.swap = swap; k.big = big; k.small = small;
+        k.title = title; k.status = status; k.number = number; k.leftLabel = leftLabel; k.done = done;
+        k.doneLabel = doneLabel; k.bar = bar; k.dateLabel = dateLabel; k.greg = greg; k.hijri = hijri;
+        return k;
+    }
+
+    /**
+     * Switches off the least important item that is still on (used when the widget is too small for all of them).
+     * Returns false when only one item is left.
+     */
+    boolean dropOne() {
+        int on = (title ? 1 : 0) + (status ? 1 : 0) + (number ? 1 : 0) + (leftLabel ? 1 : 0) + (done ? 1 : 0)
+                + (bar ? 1 : 0) + (greg ? 1 : 0) + (hijri ? 1 : 0);
+        if (dateLabel && (greg || hijri)) { dateLabel = false; return true; }
+        if (doneLabel && done) { doneLabel = false; return true; }
+        if (on <= 1) return false;
+        if (title) title = false;
+        else if (bar) bar = false;
+        else if (hijri && (greg || number || done)) hijri = false;
+        else if (status) status = false;
+        else if (done && (number || greg)) done = false;
+        else if (leftLabel) leftLabel = false;
+        else if (greg && number) greg = false;
+        else if (done) done = false;
+        else if (hijri) hijri = false;
+        else return false;
+        return true;
+    }
+
+    /** Never an empty card: with everything switched off the big number comes back. */
+    void normalize() {
+        if (!title && !status && !number && !leftLabel && !done && !bar && !greg && !hijri) number = true;
+    }
+
     void save(Context c) {
+        normalize();
         try {
             JSONObject o = new JSONObject();
             o.put("color", color).put("alpha", alpha).put("layout", layout).put("swap", swap).put("big", big)
-                    .put("small", small).put("title", title).put("done", done).put("bar", bar).put("greg", greg)
-                    .put("hijri", hijri).put("labels", labels);
+                    .put("small", small).put("title", title).put("status", status).put("number", number)
+                    .put("leftLabel", leftLabel).put("done", done).put("doneLabel", doneLabel).put("bar", bar)
+                    .put("dateLabel", dateLabel).put("greg", greg).put("hijri", hijri);
             c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY, o.toString()).apply();
         } catch (Exception e) {
             throw new IllegalStateException(e);

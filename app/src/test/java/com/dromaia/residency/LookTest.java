@@ -126,7 +126,7 @@ public class LookTest {
         assertTrue(sizeDp(bigger, R.id.remaining) < sizeDp(normal, R.id.remaining));
 
         Look bare = new Look();
-        bare.title = bare.done = bare.bar = bare.greg = bare.hijri = bare.labels = false;
+        bare.title = bare.status = bare.leftLabel = bare.done = bare.bar = bare.greg = bare.hijri = false;
         normal = widget(store(), new Look(), 360, 170, null);
         View only = widget(store(), bare, 360, 170, "look_number_only.png");
         assertEquals(View.GONE, only.findViewById(R.id.row_top).getVisibility());
@@ -134,6 +134,70 @@ public class LookTest {
         assertEquals(View.GONE, only.findViewById(R.id.bar_box).getVisibility());
         assertEquals(View.GONE, only.findViewById(R.id.dates).getVisibility());
         assertTrue(sizeDp(only, R.id.remaining) > sizeDp(normal, R.id.remaining) + 15);
+    }
+
+    @Test
+    public void smallestWidgets_showTheChosenItemsInFull() throws Exception {
+        Look number = new Look();
+        number.title = number.status = number.leftLabel = number.done = number.bar = number.greg = number.hijri = false;
+        View oneCell = widget(store(), number, 57, 57, "tiny_1x1_number.png");
+        assertTrue(sizeDp(oneCell, R.id.remaining) > 20);
+        View twoByOne = widget(store(), number, 130, 57, "tiny_2x1_number.png");
+        assertTrue(sizeDp(twoByOne, R.id.remaining) > 38);
+
+        Look withLabel = new Look();
+        withLabel.title = withLabel.status = withLabel.done = withLabel.bar = withLabel.greg = withLabel.hijri = false;
+        widget(store(), withLabel, 150, 57, "tiny_2x1_number_label.png");
+
+        Look numberAndDate = new Look();
+        numberAndDate.title = numberAndDate.status = numberAndDate.done = numberAndDate.bar = numberAndDate.hijri = numberAndDate.dateLabel = false;
+        widget(store(), numberAndDate, 200, 80, "tiny_3x1_number_date.png");
+
+        // big number hidden: what stays grows to fill the space
+        Look dateOnly = new Look();
+        dateOnly.title = dateOnly.status = dateOnly.number = dateOnly.leftLabel = dateOnly.done = dateOnly.bar = dateOnly.hijri = dateOnly.dateLabel = false;
+        View date = widget(store(), dateOnly, 200, 57, "tiny_3x1_date.png");
+        assertEquals(View.GONE, date.findViewById(R.id.row_number).getVisibility());
+        assertTrue("the date fills the widget", sizeDp(date, R.id.date_g) > 20);
+        dateOnly.small = 70;
+        assertEquals(sizeDp(date, R.id.date_g) * 0.7f, sizeDp(widget(store(), dateOnly, 200, 57, null), R.id.date_g), 0.6f);
+
+        // every tiny size still shows whatever is switched on without cutting it, in the three arrangements
+        int[][] sizes = {{57, 57}, {130, 57}, {200, 57}, {130, 130}, {57, 130}, {270, 57}};
+        Look[] looks = {new Look(), number, withLabel, numberAndDate, dateOnly};
+        for (String lang : new String[]{"ar", "en"}) {
+            Lang.set(c, lang);
+            for (int[] size : sizes) {
+                for (Look k : looks) {
+                    for (int layout = 0; layout <= 2; layout++) {
+                        k.layout = layout;
+                        widget(store(), k, size[0], size[1], null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void everythingSwitchedOff_bringsTheNumberBack_andOldSettingsStillOpen() {
+        Look k = new Look();
+        k.title = k.status = k.number = k.leftLabel = k.done = k.bar = k.greg = k.hijri = false;
+        k.save(c);
+        assertTrue(Look.load(c).number);
+
+        // a look saved by 1.5: "title" meant title + status, "labels" meant the two small labels
+        c.getSharedPreferences("look", Context.MODE_PRIVATE).edit().putString("look",
+                "{\"color\":-13926563,\"alpha\":100,\"layout\":1,\"swap\":false,\"big\":100,\"small\":100,"
+                        + "\"title\":false,\"done\":true,\"bar\":true,\"greg\":true,\"hijri\":false,\"labels\":false}").commit();
+        Look old = Look.load(c);
+        assertFalse(old.title);
+        assertFalse(old.status);
+        assertFalse(old.doneLabel);
+        assertFalse(old.dateLabel);
+        assertTrue(old.number);
+        assertTrue(old.leftLabel);
+        assertFalse(old.hijri);
+        assertEquals(1, old.layout);
     }
 
     @Test

@@ -57,6 +57,65 @@
             <TextView
                 style="@style/Section"
                 android:layout_marginTop="8dp"
+                android:text="@string/lk_show" />
+
+            <TextView
+                style="@style/Hint"
+                android:layout_marginTop="2dp"
+                android:text="@string/lk_show_hint" />
+
+            <CheckBox
+                android:id="@+id/lk_s_title"
+                style="@style/Choice"
+                android:text="@string/lk_s_title" />
+
+            <CheckBox
+                android:id="@+id/lk_s_status"
+                style="@style/Choice"
+                android:text="@string/lk_s_status" />
+
+            <CheckBox
+                android:id="@+id/lk_s_number"
+                style="@style/Choice"
+                android:text="@string/lk_s_number" />
+
+            <CheckBox
+                android:id="@+id/lk_s_left"
+                style="@style/Choice"
+                android:text="@string/lk_s_left" />
+
+            <CheckBox
+                android:id="@+id/lk_s_done"
+                style="@style/Choice"
+                android:text="@string/lk_s_done" />
+
+            <CheckBox
+                android:id="@+id/lk_s_done_label"
+                style="@style/Choice"
+                android:text="@string/lk_s_done_label" />
+
+            <CheckBox
+                android:id="@+id/lk_s_bar"
+                style="@style/Choice"
+                android:text="@string/lk_s_bar" />
+
+            <CheckBox
+                android:id="@+id/lk_s_date_label"
+                style="@style/Choice"
+                android:text="@string/lk_s_date_label" />
+
+            <CheckBox
+                android:id="@+id/lk_s_greg"
+                style="@style/Choice"
+                android:text="@string/lk_s_greg" />
+
+            <CheckBox
+                android:id="@+id/lk_s_hijri"
+                style="@style/Choice"
+                android:text="@string/lk_s_hijri" />
+
+            <TextView
+                style="@style/Section"
                 android:text="@string/lk_color" />
 
             <HorizontalScrollView
@@ -140,40 +199,6 @@
                 android:id="@+id/lk_swap"
                 style="@style/Choice"
                 android:text="@string/lk_swap" />
-
-            <TextView
-                style="@style/Section"
-                android:text="@string/lk_show" />
-
-            <CheckBox
-                android:id="@+id/lk_s_title"
-                style="@style/Choice"
-                android:text="@string/lk_s_title" />
-
-            <CheckBox
-                android:id="@+id/lk_s_done"
-                style="@style/Choice"
-                android:text="@string/lk_s_done" />
-
-            <CheckBox
-                android:id="@+id/lk_s_bar"
-                style="@style/Choice"
-                android:text="@string/lk_s_bar" />
-
-            <CheckBox
-                android:id="@+id/lk_s_greg"
-                style="@style/Choice"
-                android:text="@string/lk_s_greg" />
-
-            <CheckBox
-                android:id="@+id/lk_s_hijri"
-                style="@style/Choice"
-                android:text="@string/lk_s_hijri" />
-
-            <CheckBox
-                android:id="@+id/lk_s_labels"
-                style="@style/Choice"
-                android:text="@string/lk_s_labels" />
 
             <Button
                 android:id="@+id/lk_reset"

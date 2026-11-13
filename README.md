@@ -8,8 +8,10 @@ date) to apply for Permanent Residency, and shows on a widget:
 - the expected application date, Gregorian and Hijri (Umm al-Qura).
 
 Tap the widget to open the app (settings): Premium Residency date, **Record exit / Record return**, the travel
-record (add, edit, delete trips), and **Widget appearance** (colour and opacity, size of the big number and of the
-other texts, three arrangements, swap sides, which items are shown; live preview at the widget's real size). Arabic and English: the phone's language until the button at the top of the app
+record (add, edit, delete trips), and **Widget appearance** (which items are shown — one switch for each of the
+ten items; colour and opacity; size of the big number and of the other texts; three arrangements; swap sides; live
+preview at the widget's real size). The widget can be resized down to one cell: what stays grows to fill the space,
+and if the space is too small for the chosen items the least important ones are left out (`Look.dropOne`). Arabic and English: the phone's language until the button at the top of the app
 switches it (the widget follows the app). The dates never leave the phone; the only network use is
 **Check for update**.
 
