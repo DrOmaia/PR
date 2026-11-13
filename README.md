@@ -13,6 +13,12 @@ other texts, three arrangements, swap sides, which items are shown; live preview
 switches it (the widget follows the app). The dates never leave the phone; the only network use is
 **Check for update**.
 
+## Stable version
+
+**1.5** (tag `stable-1.5`) is the version the owner approved as stable on 13 Nov 2026. Build new work on top of it;
+to see or return to it: `git checkout stable-1.5`. When she approves a later version, add a new `stable-x.y` tag
+and update this line.
+
 ## Counting rule (`Calc.java`)
 
 - A day counts from the Premium Residency date (that day included) when the whole day is inside Saudi Arabia:
