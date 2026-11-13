@@ -52,7 +52,7 @@ public class UiTest {
 
     private View widget(Store st, String today, int wDp, int hDp, String file) throws Exception {
         FrameLayout host = new FrameLayout(c);
-        View v = CounterWidget.build(c, st, LocalDate.parse(today), hDp).apply(c, host);
+        View v = CounterWidget.build(c, st, LocalDate.parse(today), wDp, hDp).apply(c, host);
         host.addView(v);
         shoot(host, wDp, hDp, file);
         return v;
@@ -67,7 +67,7 @@ public class UiTest {
         v.layout(0, 0, w, h);
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(b);
-        canvas.drawColor(Color.rgb(40, 60, 90));
+        canvas.drawColor(Color.rgb(245, 247, 246));
         v.draw(canvas);
         File dir = new File("build/screens");
         dir.mkdirs();
@@ -104,6 +104,8 @@ public class UiTest {
         View small = widget(st, "2026-11-13", 250, 110, "widget_inside_small.png");
         assertEquals(View.GONE, small.findViewById(R.id.date_label).getVisibility());
         widget(st, "2026-11-13", 360, 200, "widget_inside_large.png");
+        widget(st, "2026-11-13", 360, 170, "widget_inside_mid.png");
+        widget(st, "2026-11-13", 300, 130, "widget_inside_130.png");
     }
 
     @Test
@@ -138,7 +140,7 @@ public class UiTest {
         assertEquals(5, list.getChildCount());
         assertEquals(c.getString(R.string.act_exit), text(a.getWindow().getDecorView(), R.id.btn_toggle));
         assertEquals("الإصدار " + BuildConfig.VERSION_NAME, text(a.getWindow().getDecorView(), R.id.version));
-        shoot(a.findViewById(android.R.id.content), 411, 980, "app.png");
+        shoot(a.findViewById(android.R.id.content), 411, 1100, "app.png");
     }
 
     @Test
@@ -177,6 +179,6 @@ public class UiTest {
         widget(st, "2026-11-13", 320, 150, "widget_en.png");
         Activity a = Robolectric.buildActivity(MainActivity.class).setup().get();
         assertEquals(c.getString(R.string.act_return), text(a.getWindow().getDecorView(), R.id.btn_toggle));
-        shoot(a.findViewById(android.R.id.content), 411, 1060, "app_en.png");
+        shoot(a.findViewById(android.R.id.content), 411, 1200, "app_en.png");
     }
 }

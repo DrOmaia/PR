@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="green">#0B7A46</color>
-    <color name="green_dark">#00562B</color>
+    <color name="green">#2A7F5D</color>
+    <color name="green_dark">#1F6B4D</color>
     <color name="on_card">#FFFFFF</color>
-    <color name="on_card_soft">#D5EBDF</color>
-    <color name="amber">#FFD54F</color>
-    <color name="bg">#F3F6F4</color>
-    <color name="text">#1C2421</color>
-    <color name="muted">#66736D</color>
+    <color name="on_card_soft">#DDF0E6</color>
+    <color name="amber">#FFE08A</color>
+    <color name="bg">#F5F7F6</color>
+    <color name="text">#26302C</color>
+    <color name="muted">#6B7872</color>
     <color name="warn_text">#7A5200</color>
 </resources>

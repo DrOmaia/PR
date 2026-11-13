@@ -146,6 +146,10 @@ public class MainActivity extends Activity {
         status.setText(s.status);
         status.setTextColor(getColor(s.abroad || s.noGrant ? R.color.amber : R.color.on_card));
         text(R.id.remaining, s.remaining);
+        ((TextView) findViewById(R.id.remaining)).setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 72);
+        ((TextView) findViewById(R.id.done)).setTextSize(26);
+        ((TextView) findViewById(R.id.date_g)).setTextSize(19);
+        ((TextView) findViewById(R.id.date_h)).setTextSize(19);
         text(R.id.done, s.done);
         ((ProgressBar) findViewById(R.id.progress)).setProgress(s.progress);
         text(R.id.date_label, s.dateLabel);

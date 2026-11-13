@@ -51,14 +51,18 @@ public class CounterWidget extends AppWidgetProvider {
         Store st = Store.load(c);
         LocalDate today = Store.today();
         for (int id : ids) {
-            int h = m.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0);
-            m.updateAppWidget(id, build(c, st, today, h));
+            Bundle o = m.getAppWidgetOptions(id); // portrait size on the home screen
+            m.updateAppWidget(id, build(c, st, today, o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0),
+                    o.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)));
         }
         schedule(c);
     }
 
-    /** heightDp: the widget's height on the home screen (0 = unknown). Short widgets drop the two small labels. */
-    static RemoteViews build(Context context, Store st, LocalDate today, int heightDp) {
+    /**
+     * widthDp / heightDp: the widget's size on the home screen (0 = unknown). The big number takes all the height
+     * that is left; a short widget drops the small labels, a narrow one uses smaller side texts.
+     */
+    static RemoteViews build(Context context, Store st, LocalDate today, int widthDp, int heightDp) {
         Context c = Lang.wrap(context); // the language chosen in the app, not the home screen's
         Summary s = Summary.of(c, st, today);
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
@@ -66,10 +70,23 @@ public class CounterWidget extends AppWidgetProvider {
         v.setTextViewText(R.id.title, c.getString(R.string.app_title));
         v.setTextViewText(R.id.left_label, c.getString(R.string.days_left));
         v.setTextViewText(R.id.done_label, c.getString(R.string.days_done));
-        boolean compact = heightDp > 0 && heightDp < 130;
-        v.setTextViewTextSize(R.id.remaining, TypedValue.COMPLEX_UNIT_SP, compact ? 30 : heightDp >= 190 ? 52 : 40);
-        v.setViewVisibility(R.id.done_label, compact ? View.GONE : View.VISIBLE);
-        v.setViewVisibility(R.id.date_label, compact ? View.GONE : View.VISIBLE);
+
+        boolean labels = heightDp == 0 || heightDp >= 150;   // "days done" and "Expected application date"
+        boolean narrow = widthDp > 0 && widthDp < 300;
+        float fs = c.getResources().getConfiguration().fontScale;
+        // height taken by everything except the number row: padding, top line, bar, dates (+ label)
+        float fixed = 20 + 8 + 6 + (18 + 23 + (labels ? 16 : 0)) * fs;
+        float byHeight = heightDp == 0 ? 50 : (heightDp - fixed - 4) / 1.2f;
+        // width left for the number: card minus padding, "days left" and the "365 / 900" block
+        float byWidth = widthDp == 0 ? 80 : (widthDp - 36 - (narrow ? 130 : 185) * fs) / (0.6f * Math.max(3, s.remaining.length()));
+        float number = Math.max(26, Math.min(72, Math.min(byHeight, byWidth)));
+        v.setTextViewTextSize(R.id.remaining, TypedValue.COMPLEX_UNIT_DIP, number);
+        v.setTextViewTextSize(R.id.left_label, TypedValue.COMPLEX_UNIT_SP, narrow ? 12 : 15);
+        v.setTextViewTextSize(R.id.done, TypedValue.COMPLEX_UNIT_SP, narrow ? 17 : 22);
+        v.setTextViewTextSize(R.id.date_g, TypedValue.COMPLEX_UNIT_SP, narrow ? 14 : 17);
+        v.setTextViewTextSize(R.id.date_h, TypedValue.COMPLEX_UNIT_SP, narrow ? 14 : 17);
+        v.setViewVisibility(R.id.done_label, labels ? View.VISIBLE : View.GONE);
+        v.setViewVisibility(R.id.date_label, labels ? View.VISIBLE : View.GONE);
         v.setInt(R.id.card, "setBackgroundResource", s.abroad ? R.drawable.card_paused : R.drawable.card);
         v.setTextViewText(R.id.status, s.status);
         v.setTextColor(R.id.status, c.getColor(s.abroad || s.noGrant ? R.color.amber : R.color.on_card));
