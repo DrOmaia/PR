@@ -17,10 +17,10 @@ switches it (the widget follows the app). The dates never leave the phone; the o
 
 ## Stable version
 
-**1.6** is the version the owner approved as stable on 13 Nov 2026: commit `402375e`, tag and release `build-8`
+**1.7** is the version the owner approved as stable on 14 Nov 2026: commit `87ac715`, tag and release `build-9`
 (its APK is attached to that release). Build new work on top of it; to see or return to it:
-`git checkout build-8`. Earlier stable: 1.5 (`build-5`). When she approves a later version, update this line with
-its `build-N` tag.
+`git checkout build-9`. Earlier stable: 1.6 (`build-8`), 1.5 (`build-5`). When she approves a later version, update
+this line with its `build-N` tag.
 
 ## Counting rule (`Calc.java`)
 
