@@ -12,6 +12,14 @@ final class Defaults {
         return null;
     }
 
+    static LocalDate end() {
+        return null;
+    }
+
+    static int[] endHijri() {
+        return null;
+    }
+
     static List<Calc.Trip> trips() {
         return new ArrayList<>();
     }

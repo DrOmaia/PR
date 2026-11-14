@@ -12,12 +12,12 @@
     <string name="lbl_reached">اكتملت 900 يوم في</string>
     <string name="date_g">%1$s %2$s %3$s</string>
     <string name="date_h">%1$s %2$s %3$s هـ</string>
-    <string name="warn_late">التاريخ المتوقع بعد نهاية الخمس سنوات (%1$s).</string>
+    <string name="warn_late">التاريخ المتوقع بعد تاريخ انتهاء الإقامة (%1$s).</string>
     <string name="act_exit">تسجيل خروج من السعودية</string>
     <string name="act_return">تسجيل العودة إلى السعودية</string>
     <string name="grant_title">تاريخ الحصول على الإقامة المميزة</string>
     <string name="choose_date">اختيار التاريخ</string>
-    <string name="deadline">تنتهي الخمس سنوات في %1$s</string>
+    <string name="end_title">تاريخ انتهاء الإقامة المميزة</string>
     <string name="trips_title">سجل السفر</string>
     <string name="add_trip">+ إضافة سفرة</string>
     <string name="trip_title">سفرة</string>

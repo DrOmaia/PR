@@ -83,12 +83,23 @@
             android:layout_height="wrap_content"
             android:text="@string/choose_date" />
 
-        <TextView
-            android:id="@+id/deadline"
+        <LinearLayout
+            android:id="@+id/end_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/muted"
-            android:textSize="15sp" />
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Section"
+                android:layout_marginTop="8dp"
+                android:text="@string/end_title" />
+
+            <Button
+                android:id="@+id/btn_end"
+                style="@style/DateButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

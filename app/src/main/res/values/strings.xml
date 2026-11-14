@@ -12,12 +12,12 @@
     <string name="lbl_reached">900 days completed on</string>
     <string name="date_g">%1$s %2$s %3$s</string>
     <string name="date_h">%1$s %2$s %3$s AH</string>
-    <string name="warn_late">The expected date is after the end of the 5 years (%1$s).</string>
+    <string name="warn_late">The expected date is after the residency expiry date (%1$s).</string>
     <string name="act_exit">Record exit from Saudi Arabia</string>
     <string name="act_return">Record return to Saudi Arabia</string>
     <string name="grant_title">Premium Residency issue date</string>
     <string name="choose_date">Choose date</string>
-    <string name="deadline">The 5 years end on %1$s</string>
+    <string name="end_title">Premium Residency expiry date</string>
     <string name="trips_title">Travel record</string>
     <string name="add_trip">+ Add trip</string>
     <string name="trip_title">Trip</string>

@@ -131,6 +131,19 @@ public class UiTest {
     }
 
     @Test
+    public void expiryDate_setByHand_isKept() {
+        Store st = store("2025-02-01");
+        LocalDate worked = Calc.defaultEnd(LocalDate.parse("2025-02-01"));
+        assertEquals(worked, st.end());
+        st.end = worked.plusDays(9);
+        st.save(c);
+        assertEquals(worked.plusDays(9), Store.load(c).end());
+        st.end = null;
+        st.save(c);
+        assertEquals(worked, Store.load(c).end());
+    }
+
+    @Test
     public void app_opensAndListsTheTrips() throws Exception {
         Store st = store("2025-02-01");
         st.save(c);
@@ -139,6 +152,7 @@ public class UiTest {
         assertEquals(5, list.getChildCount());
         assertEquals(c.getString(R.string.act_exit), text(a.getWindow().getDecorView(), R.id.btn_toggle));
         assertEquals("الإصدار " + BuildConfig.VERSION_NAME, text(a.getWindow().getDecorView(), R.id.version));
+        assertEquals("1 فبراير 2025  ·  2 شعبان 1446 هـ", text(a.getWindow().getDecorView(), R.id.btn_grant));
         shoot(a.findViewById(android.R.id.content), 411, 1100, "app.png");
     }
 

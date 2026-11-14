@@ -50,6 +50,11 @@ public class MainActivity extends Activity {
                     st.grant = d;
                     changed();
                 }));
+        findViewById(R.id.btn_end).setOnClickListener(v -> pickDate(st.end(), st.grant, d -> {
+            st.end = d;
+            st.endHijri = null; // a date set by hand: Hijri by the phone's conversion
+            changed();
+        }));
         findViewById(R.id.btn_add).setOnClickListener(v -> editTrip(null));
     }
 
@@ -150,10 +155,12 @@ public class MainActivity extends Activity {
         ((Button) findViewById(R.id.btn_toggle)).setText(st.openTrip() != null ? R.string.act_return : R.string.act_exit);
         text(R.id.btn_grant, st.grant == null ? getString(R.string.choose_date)
                 : Summary.greg(this, st.grant) + "  ·  " + Summary.hijri(this, st.grant));
-        TextView deadline = findViewById(R.id.deadline);
-        deadline.setVisibility(st.grant == null ? View.GONE : View.VISIBLE);
-        if (st.grant != null) {
-            deadline.setText(getString(R.string.deadline, Summary.greg(this, st.grant.plusYears(Calc.WINDOW_YEARS))));
+        LocalDate end = st.end();
+        findViewById(R.id.end_box).setVisibility(end == null ? View.GONE : View.VISIBLE);
+        if (end != null) {
+            int[] h = st.end != null ? st.endHijri : null; // as printed on the residency, when known
+            text(R.id.btn_end, Summary.greg(this, end) + "  ·  "
+                    + (h != null ? Summary.hijri(this, h[0], h[1], h[2]) : Summary.hijri(this, end)));
         }
 
         LinearLayout list = findViewById(R.id.trips);

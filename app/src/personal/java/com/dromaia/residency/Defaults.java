@@ -17,6 +17,16 @@ final class Defaults {
         return LocalDate.parse("2025-05-28");
     }
 
+    /** Expiry date exactly as on the residency: 2030/04/02, shown there as 1451/11/29 in Hijri. */
+    static LocalDate end() {
+        return LocalDate.parse("2030-04-02");
+    }
+
+    /** The Hijri date printed for end() {year, month, day}: the official record, not the phone's conversion. */
+    static int[] endHijri() {
+        return new int[]{1451, 11, 29};
+    }
+
     static List<Calc.Trip> trips() {
         List<Calc.Trip> t = new ArrayList<>();
         t.add(trip("2025-05-29", "2025-08-08")); // Jordan

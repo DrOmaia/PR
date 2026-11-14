@@ -29,7 +29,8 @@ public class PersonalTest {
         // saved at once: an update that carries no dates still finds them
         String saved = c.getSharedPreferences("data", Context.MODE_PRIVATE).getString("state", null);
         assertNotNull(saved);
-        assertEquals("{\"grant\":\"2025-05-28\",\"trips\":[[\"2025-05-29\",\"2025-08-08\"],[\"2025-11-11\",\"2025-11-15\"],"
+        assertEquals("{\"grant\":\"2025-05-28\",\"end\":\"2030-04-02\",\"endHijri\":[1451,11,29],"
+                + "\"trips\":[[\"2025-05-29\",\"2025-08-08\"],[\"2025-11-11\",\"2025-11-15\"],"
                 + "[\"2026-03-07\",\"2026-03-25\"],[\"2026-03-25\",\"2026-03-25\"],[\"2026-05-19\",\"2026-07-31\"]]}", saved);
     }
 
@@ -49,6 +50,22 @@ public class PersonalTest {
         Store st = Store.load(c);
         assertEquals(LocalDate.parse("2024-01-15"), st.grant);
         assertEquals(1, st.trips.size());
+    }
+
+    @Test
+    public void expiryDate_isShownAsOnTheResidency_alsoForDatesSavedBefore() {
+        // what 1.6 had saved on the owner's phone: no expiry date yet
+        c.getSharedPreferences("data", Context.MODE_PRIVATE).edit().putString("state",
+                "{\"grant\":\"2025-05-28\",\"trips\":[[\"2025-05-29\",\"2025-08-08\"],[\"2026-05-19\",\"2026-07-31\"]]}").commit();
+        Store st = Store.load(c);
+        assertEquals(LocalDate.parse("2030-04-02"), st.end());
+        assertEquals(2, st.trips.size());
+        Updater.base = "";
+        android.app.Activity a = org.robolectric.Robolectric.buildActivity(MainActivity.class).setup().get();
+        String shown = ((android.widget.TextView) a.findViewById(R.id.btn_end)).getText().toString();
+        assertEquals(org.robolectric.RuntimeEnvironment.getApplication().getResources().getConfiguration().getLocales().get(0).getLanguage().equals("ar")
+                ? "2 أبريل 2030  ·  29 ذو القعدة 1451 هـ" : "2 April 2030  ·  29 Dhu al-Qi'dah 1451 AH", shown);
+        assertEquals(LocalDate.parse("2030-04-02"), Calc.compute(st.grant, st.end, st.trips, LocalDate.parse("2026-11-14")).deadline);
     }
 
     @Test

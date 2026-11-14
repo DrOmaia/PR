@@ -1,6 +1,8 @@
 package com.dromaia.residency;
 
 import java.time.LocalDate;
+import java.time.chrono.HijrahDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -38,9 +40,22 @@ public final class Calc {
         public int remaining;     // TARGET - done
         public boolean abroad;    // outside Saudi Arabia today: the counter is frozen
         public boolean reached;   // TARGET already completed
-        public boolean late;      // expected date falls after the 5-year window
+        public boolean late;      // expected date falls after the residency's expiry date
         public LocalDate expected; // the day the TARGET-th day is completed
-        public LocalDate deadline; // grant date + 5 years
+        public LocalDate deadline; // the residency's expiry date (its last day)
+    }
+
+    /**
+     * Expiry date when none is given: the residency lasts 5 Hijri years (Umm al-Qura), so the last day is the issue
+     * date + 5 Hijri years - 1 day. Official records can differ from this by a day (their Hijri table is not exactly
+     * the phone's), so the owner's real expiry date is kept as given (Defaults.end) and any date can be set in the app.
+     */
+    public static LocalDate defaultEnd(LocalDate grant) {
+        try {
+            return LocalDate.from(HijrahDate.from(grant).plus(WINDOW_YEARS, ChronoUnit.YEARS).minus(1, ChronoUnit.DAYS));
+        } catch (RuntimeException e) {
+            return grant.plusDays(1771); // 5 Hijri years are about 1772 days
+        }
     }
 
     static boolean outside(List<Trip> trips, LocalDate d, LocalDate today) {
@@ -52,6 +67,11 @@ public final class Calc {
     }
 
     public static Result compute(LocalDate grant, List<Trip> trips, LocalDate today) {
+        return compute(grant, null, trips, today);
+    }
+
+    /** end = the residency's expiry date; null = worked out from the issue date (defaultEnd). */
+    public static Result compute(LocalDate grant, LocalDate end, List<Trip> trips, LocalDate today) {
         Result r = new Result();
         for (Trip t : trips) {
             if (!t.exit.isAfter(today) && (t.entry == null || today.isBefore(t.entry))) r.abroad = true;
@@ -59,7 +79,7 @@ public final class Calc {
         r.remaining = TARGET;
         if (grant == null) return r;
 
-        r.deadline = grant.plusYears(WINDOW_YEARS);
+        r.deadline = end != null ? end : defaultEnd(grant);
         int count = 0;
         LocalDate limit = grant.plusYears(60);
         for (LocalDate d = grant; d.isBefore(limit); d = d.plusDays(1)) {
@@ -70,7 +90,7 @@ public final class Calc {
         }
         r.remaining = TARGET - r.done;
         r.reached = r.expected != null && !r.expected.isAfter(today);
-        r.late = r.expected != null && !r.expected.isBefore(r.deadline);
+        r.late = r.expected != null && r.expected.isAfter(r.deadline);
         return r;
     }
 }

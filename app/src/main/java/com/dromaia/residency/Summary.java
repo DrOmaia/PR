@@ -16,7 +16,7 @@ final class Summary {
     boolean abroad, noGrant;
 
     static Summary of(Context c, Store st, LocalDate today) {
-        Calc.Result r = Calc.compute(st.grant, st.trips, today);
+        Calc.Result r = Calc.compute(st.grant, st.end, st.trips, today);
         Summary s = new Summary();
         s.abroad = r.abroad;
         s.noGrant = st.grant == null;
@@ -56,6 +56,10 @@ final class Summary {
             month = ic.get(IslamicCalendar.MONTH) + 1;
             year = ic.get(IslamicCalendar.YEAR);
         }
+        return hijri(c, year, month, day);
+    }
+
+    static String hijri(Context c, int year, int month, int day) {
         String[] m = c.getResources().getStringArray(R.array.hijri_months);
         return c.getString(R.string.date_h, num(day), m[month - 1], num(year));
     }

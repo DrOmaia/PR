@@ -91,6 +91,24 @@ public class CalcTest {
     }
 
     @Test
+    public void expiryDate_isFiveHijriYearsFromTheIssueDate() {
+        // issued 1 Dhu al-Hijjah 1446 -> the day before 1 Dhu al-Hijjah 1451 (29 Dhu al-Qi'dah by the phone's table)
+        assertEquals(d("2030-04-03"), Calc.defaultEnd(d("2025-05-28")));
+        Calc.Result r = Calc.compute(d("2025-05-28"), new ArrayList<>(), d("2026-11-14"));
+        assertEquals(d("2030-04-03"), r.deadline);
+        assertFalse(r.late);
+    }
+
+    @Test
+    public void late_comparesWithTheExpiryDate_alsoOneSetByHand() {
+        LocalDate grant = d("2025-05-28");
+        LocalDate expected = Calc.compute(grant, new ArrayList<>(), d("2025-06-01")).expected;
+        assertFalse(Calc.compute(grant, expected, new ArrayList<>(), d("2025-06-01")).late);            // completed on the last day
+        assertTrue(Calc.compute(grant, expected.minusDays(1), new ArrayList<>(), d("2025-06-01")).late); // one day short
+        assertEquals(expected.minusDays(1), Calc.compute(grant, expected.minusDays(1), new ArrayList<>(), d("2025-06-01")).deadline);
+    }
+
+    @Test
     public void beforeGrantOrNoGrant() {
         assertEquals(0, Calc.compute(d("2025-06-01"), new ArrayList<>(), d("2025-01-01")).done);
         Calc.Result r = Calc.compute(null, new ArrayList<>(), d("2025-01-01"));

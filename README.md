@@ -28,7 +28,11 @@ its `build-N` tag.
   **the exit day and the return day are not counted**.
 - A trip with no return date freezes the counter; the expected date assumes a return today, so it moves one day
   later every day until the return is recorded.
-- Expected date = the day the 900th day is completed. A warning shows in the app if it falls after the 5 years.
+- Expected date = the day the 900th day is completed. A warning shows in the app if it falls after the
+  residency's **expiry date**. The owner's is kept exactly as printed on her residency (`Defaults.end`: 2 April
+  2030, shown there as 29 Dhu al-Qi'dah 1451); otherwise it is worked out as 5 Hijri years from the issue date
+  minus one day (`Calc.defaultEnd`), and any date can be set by hand in the app. Official records can differ by a
+  day from the phone's Hijri conversion, so a given Hijri date is shown as given, not converted.
 - "Today" is always Riyadh time.
 
 ## Files
